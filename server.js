@@ -7,12 +7,24 @@ app.get("/:date", function (req, res) {
   "July", "August", "September", "October", "November", "December"]
   var d
   var obj
-  if (Number.isInteger(Number(req.params.date.slice(5)))) {
-  d = new Date(Number(req.params.date.slice(5))*1000)
+  var unixTime
+  var naturalTime
+  var input = req.params.date.slice(5)
+  var readable = chrono.parseDate(input)
+  if (Number.isInteger(Number(input))) {
+  d = new Date(Number(input)*1000)
+  unixTime = d.getTime()*(0.001)
+  naturalTime = monthNames[d.getMonth()]+" "+d.getDate()+","+d.getFullYear()
+  } else if (readable !== null){
+  d = new Date(chrono.parseDate(input))
+  unixTime = d.getTime()*(0.001)
+  naturalTime = monthNames[d.getMonth()]+" "+d.getDate()+","+d.getFullYear()
   } else {
-  d = new Date(chrono.parseDate(req.params.date.slice(5)))
+  unixTime = null
+  naturalTime = null
   }
-obj = {unix:d.getTime()/1000, natural:monthNames[d.getMonth()]+" "+d.getDate()+","+d.getFullYear()}
+  
+obj = {unix:unixTime, natural:naturalTime}
   res.send(obj)
 })
 
